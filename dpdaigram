@@ -1,0 +1,181 @@
+Table USER {
+  UserID int [pk]
+  UserName varchar(50)
+  Email varchar(70)
+  Phone int
+  Password varchar(50)
+}
+
+Table ROLE {
+  RoleID int [pk]
+  RoleName varchar(50)
+}
+
+Table USER_ROLE {
+  UserID int [ref: > USER.UserID]
+  RoleID int [ref: > ROLE.RoleID]
+  primary key (UserID, RoleID)
+}
+
+Table LOCATION {
+  LocationID int [pk]
+  Address varchar(100)
+  City varchar(50)
+  ZIP int
+}
+
+Table CUSTOMER {
+  CustomerID int [pk]
+  UserID int [ref: > USER.UserID]
+  FirstName varchar(50)
+  LastName varchar(70)
+  Preference varchar(50)
+  LocationID int [ref: > LOCATION.LocationID]
+}
+
+Table KITCHEN {
+  KitchenID int [pk]
+  UserID int [ref: > USER.UserID]
+  Name varchar(70)
+  Description binary
+  Image binary
+  IsActive boolean
+  LocationID int [ref: > LOCATION.LocationID]
+}
+
+Table MENU {
+  MenuID int [pk]
+  Name varchar(100)
+  KitchenID int [ref: > KITCHEN.KitchenID]
+}
+
+Table CATEGORY {
+  CategoryID int [pk]
+  Name varchar(50)
+}
+
+Table TAG {
+  TagID int [pk]
+  Name varchar(50)
+}
+
+Table MENU_ITEM {
+  MenuItemID int [pk]
+  MenuID int [ref: > MENU.MenuID]
+  OrderIndex int
+  Name varchar(100)
+  Description binary
+  Price int
+  Image binary
+  CategoryID int [ref: > CATEGORY.CategoryID]
+}
+
+Table MENU_ITEM_TAG {
+  MenuItemID int [ref: > MENU_ITEM.MenuItemID]
+  TagID int [ref: > TAG.TagID]
+  primary key (MenuItemID, TagID)
+}
+
+Table ORDER_STATUS {
+  StatusID int [pk]
+  StatusName varchar(50)
+}
+
+Table COUPON {
+  CouponID int [pk]
+  Code varchar(50)
+  DiscountValue int
+  ValidFrom datetime
+  ValidTo datetime
+}
+
+Table ORDER {
+  OrderID int [pk]
+  CustomerID int [ref: > CUSTOMER.CustomerID]
+  StatusID int [ref: > ORDER_STATUS.StatusID]
+  KitchenID int [ref: > KITCHEN.KitchenID]
+  CouponID int [ref: > COUPON.CouponID]
+  PreparedDate datetime
+  IsPaid boolean
+  Price decimal
+  Note varchar(500)
+  OrderedDate datetime
+}
+
+Table ORDER_ITEM {
+  OrderItemID int [pk]
+  OrderID int [ref: > ORDER.OrderID]
+  MenuItemID int [ref: > MENU_ITEM.MenuItemID]
+  Quantity int
+}
+
+Table RATING {
+  RatingID int [pk]
+  UserID int [ref: > USER.UserID]
+  KitchenID int [ref: > KITCHEN.KitchenID]
+  Comment varchar(100)
+  Star int
+}
+
+Table PAYMENT {
+  PaymentID int [pk]
+  OrderID int [ref: > ORDER.OrderID]
+  PaymentMethod varchar(30)
+  Amount decimal
+  PaymentDate datetime
+  TransactionID varchar(100)
+}
+
+Table OPENING_HOURS {
+  OpeningHoursID int [pk]
+  KitchenID int [ref: > KITCHEN.KitchenID]
+  Day int
+  FromHour int
+  FromMinute int
+  ToHour int
+  ToMinute int
+}
+
+Table DELIVERY_PERSON {
+  DeliveryPersonID int [pk]
+  FK_UserID int [ref: > USER.UserID]
+  VehicleNumber varchar(20)
+}
+
+Table DELIVERY {
+  DeliveryID int [pk]
+  OrderID int [ref: > ORDER.OrderID]
+  DeliveryPersonID int [ref: > DELIVERY_PERSON.DeliveryPersonID]
+  DeliveryStatus varchar(30)
+  EstimatedDeliveryTime datetime
+  DeliveredTime datetime
+}
+
+Table KITCHEN_PAYOUT {
+  KitchenPayoutID int [pk]
+  KitchenID int [ref: > KITCHEN.KitchenID]
+  Amount decimal
+  PayoutDate datetime
+  Notes varchar(255)
+}
+
+Table DELIVERY_PAYOUT {
+  DeliveryPayoutID int [pk]
+  DeliveryPersonID int [ref: > DELIVERY_PERSON.DeliveryPersonID]
+  Amount decimal
+  PaymentDate datetime
+  Notes varchar(255)
+}
+
+Table CART {
+  CartID int [pk]
+  CustomerID int [ref: > CUSTOMER.CustomerID]
+  CreatedDate datetime
+}
+
+Table CART_ITEM {
+  CartItemID int [pk]
+  CartID int [ref: > CART.CartID]
+  MenuItemID int [ref: > MENU_ITEM.MenuItemID]
+  Quantity int
+}
